@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм»
 
 * Студент: [kostya Lysenko](https://up.htmlacademy.ru/javascript/26/user/586823).
-* Наставник: `Неизвестно`.
+* Наставник: [Роман Марченко](https://htmlacademy.ru/profile/id505487).
 
 ---
 
