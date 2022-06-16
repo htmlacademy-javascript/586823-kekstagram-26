@@ -1,3 +1,11 @@
+const MESSAGES = ['Всё отлично!',
+  'В целом всё неплохо. Но не всё.',
+  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
+  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
+  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
+  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
+const NAMES = ['Ann', 'Greg', 'Linda', 'Omar', 'Ira', 'Kostya', 'Theo', 'Marko'];
+
 const getRandomNumber = (from, to) => {
   if(from <= 0 || to < 0) {return null;}
   if(from === to) {return from;}
@@ -23,24 +31,18 @@ const getRandomElementOfArray = (array) => {
   return element;
 };
 
-const getCommentsArray = () => {
+const getCommentsArray = (messagesArray, namesArray) => {
   const commnetsArray = [];
   const usedIds = [];
   const countComments = getRandomNumber(2, 10);
-  const messages = ['Всё отлично!',
-    'В целом всё неплохо. Но не всё.',
-    'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
-    'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-    'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-    'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
-  const names = ['Ann', 'Greg', 'Linda', 'Omar', 'Ira', 'Kostya', 'Theo', 'Marko'];
+
 
   for(let i = 0; i < countComments; i++) {
     const comment = {
       id: getRandomNumber(1, 200),
       avatar: `img/avatar-${  getRandomNumber(1, 6)  }.svg`,
-      message: getRandomElementOfArray(messages),
-      name: getRandomElementOfArray(names),
+      message: getRandomElementOfArray(messagesArray),
+      name: getRandomElementOfArray(namesArray),
     };
     // Create random uniq id
     for(const usedId of usedIds) {
@@ -71,7 +73,7 @@ const getPublicationsArray = () => {
       url: `photos/${  idNumber  }.jpg`,
       description: 'it\'s very beautiful photo',
       likes: getRandomLikes(),
-      comments: getCommentsArray(),
+      comments: getCommentsArray(MESSAGES, NAMES),
     };
     publicationArray[i] = publication;
   }
