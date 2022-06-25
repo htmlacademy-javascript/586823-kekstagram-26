@@ -13,4 +13,6 @@ const getIsStringSizeAvailable = (string, availableLength) => {
 };
 getIsStringSizeAvailable('hi', 5);
 
-export {getRandomNumber, getIsStringSizeAvailable};
+const isEscape = (evt) => evt.key === 'Escape';
+
+export {getRandomNumber, getIsStringSizeAvailable, isEscape};
