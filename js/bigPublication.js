@@ -10,39 +10,28 @@ const buttonCansel = document.querySelector('.big-picture__cancel');
 const commentBlock = document.querySelector('.social__comments');
 const commentTemplate = commentBlock.querySelector('.social__comment');
 
-// variables for remove EventListener
-let isCansel = false;
-
 
 // function for close button
 const onCloseButton = () => {
   bigPublication.classList.add('hidden');
   body.classList.remove('modal-open');
-  isCansel = true;
+  buttonCansel.removeEventListener('click', onCloseButton);
 };
 const onCloseEscape = (evt) => {
   if(isEscape(evt)) {
     bigPublication.classList.add('hidden');
     body.classList.remove('modal-open');
-    isCansel = true;
+    window.removeEventListener('keydown', onCloseEscape);
   }
 };
 
 
 const openBigPublication = (evt, picture) => {
   evt.preventDefault();
-  isCansel = false;
 
   // Cansel button
   buttonCansel.addEventListener('click', onCloseButton);
-  window.addEventListener('keydown', (event) => onCloseEscape(event));
-
-  // remove EventListener
-  if(isCansel) {
-    window.removeEventListener('keydown', (event) => onCloseEscape(event));
-    buttonCansel.removeEventListener('click', onCloseButton);
-  }
-
+  window.addEventListener('keydown', onCloseEscape);
 
   // drawing of bigPublication
   bigPublication.classList.remove('hidden');
