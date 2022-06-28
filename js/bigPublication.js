@@ -1,7 +1,7 @@
 import {publicationsArray} from './publications.js';
 import {isEscape} from './util.js';
 
-const pictures = document.querySelectorAll('.picture');
+const pictures = document.querySelector('.pictures');
 const bigPublication = document.querySelector('.big-picture');
 const body = document.querySelector('body');
 const commentsCounter = document.querySelector('.social__comment-count');
@@ -11,7 +11,7 @@ const commentBlock = document.querySelector('.social__comments');
 const commentTemplate = commentBlock.querySelector('.social__comment');
 
 
-// function for close button
+// Function for close button
 const onCloseButton = () => {
   bigPublication.classList.add('hidden');
   body.classList.remove('modal-open');
@@ -26,14 +26,20 @@ const onCloseEscape = (evt) => {
 };
 
 
-const openBigPublication = (evt, picture) => {
+const openBigPublication = (evt) => {
+  const picture = evt.target.parentNode;
+
+  if(picture.className !== 'picture') {
+    return;
+  }
+
   evt.preventDefault();
 
   // Cansel button
   buttonCansel.addEventListener('click', onCloseButton);
   window.addEventListener('keydown', onCloseEscape);
 
-  // drawing of bigPublication
+  // Drawing of bigPublication
   bigPublication.classList.remove('hidden');
   commentsCounter.classList.add('hidden');
   loaderMoreComments.classList.add('hidden');
@@ -46,7 +52,7 @@ const openBigPublication = (evt, picture) => {
   bigPublication.querySelector('.comments-count').textContent = picture.querySelector('.picture__comments').textContent;
   bigPublication.querySelector('.social__caption').textContent = picture.querySelector('.picture__comments').textContent;
 
-  // drawing comments
+  // Drawing comments
   const id = picture.dataset.id;
   const commentsFragment = document.createDocumentFragment();
   for(const comment of publicationsArray[id].comments) {
@@ -62,6 +68,4 @@ const openBigPublication = (evt, picture) => {
   commentBlock.appendChild(commentsFragment);
 };
 
-pictures.forEach((picture) => {
-  picture.addEventListener('click', (evt) => {openBigPublication(evt, picture);});
-});
+pictures.addEventListener('click', openBigPublication);
