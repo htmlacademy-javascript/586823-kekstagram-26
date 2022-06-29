@@ -11,21 +11,6 @@ const buttonCansel = document.querySelector('.big-picture__cancel');
 const commentBlock = document.querySelector('.social__comments');
 const commentTemplate = commentBlock.querySelector('.social__comment');
 
-
-// Function for close button
-const onCloseButton = () => {
-  bigPublication.classList.add('hidden');
-  body.classList.remove('modal-open');
-  buttonCansel.removeEventListener('click', onCloseButton);
-};
-const onCloseEscape = (evt) => {
-  if(isEscape(evt)) {
-    bigPublication.classList.add('hidden');
-    body.classList.remove('modal-open');
-    window.removeEventListener('keydown', onCloseEscape);
-  }
-};
-
 // loading more comments
 const loadMoreComments = () => {
   const commentsCounterNumber = Number(commentsCounter.textContent);
@@ -47,6 +32,23 @@ const loadMoreComments = () => {
     loaderMoreComments.classList.add('hidden');
   }
 };
+
+// Function for close button
+const onCloseButton = () => {
+  bigPublication.classList.add('hidden');
+  body.classList.remove('modal-open');
+  buttonCansel.removeEventListener('click', onCloseButton);
+  loaderMoreComments.removeEventListener('click', loadMoreComments);
+};
+const onCloseEscape = (evt) => {
+  if(isEscape(evt)) {
+    bigPublication.classList.add('hidden');
+    body.classList.remove('modal-open');
+    window.removeEventListener('keydown', onCloseEscape);
+    loaderMoreComments.removeEventListener('click', loadMoreComments);
+  }
+};
+
 
 const openBigPublication = (evt) => {
   const picture = evt.target.parentNode;
