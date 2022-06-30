@@ -16,6 +16,10 @@ const onCloseButton = () => {
   publicationEditor.classList.add('hidden');
   body.classList.remove('modal-open');
   fileUploader.value = '';
+  hashTagInput.removeEventListener('focusout', addEscListenerOnHashTag);
+  commentInput.removeEventListener('focusout', addEscListenerOnComment);
+  hashTagInput.removeEventListener('focus', removeEscListenerOnHashTag);
+  commentInput.removeEventListener('focus', removeEscListenerOnComment);
   buttonCansel.removeEventListener('click', onCloseButton);
 };
 const onCloseEscape = (evt) => {
@@ -23,27 +27,26 @@ const onCloseEscape = (evt) => {
     publicationEditor.classList.add('hidden');
     body.classList.remove('modal-open');
     fileUploader.value = '';
+    hashTagInput.removeEventListener('focusout', addEscListenerOnHashTag);
+    commentInput.removeEventListener('focusout', addEscListenerOnComment);
+    hashTagInput.removeEventListener('focus', removeEscListenerOnHashTag);
+    commentInput.removeEventListener('focus', removeEscListenerOnComment);
     window.removeEventListener('keydown', onCloseEscape);
   }
 };
-
 // Function for remove and return Event listener on ESC in modal window
-const removeEscListenerOnHashTag = () => {
+function removeEscListenerOnHashTag () {
   window.removeEventListener('keydown', onCloseEscape);
-  hashTagInput.removeEventListener('focus', removeEscListenerOnHashTag);
-};
-const addEscListenerOnHashTag = () => {
+}
+function addEscListenerOnHashTag () {
   window.addEventListener('keydown', onCloseEscape);
-  hashTagInput.removeEventListener('focus', addEscListenerOnHashTag);
-};
-const removeEscListenerOnComment = () => {
+}
+function removeEscListenerOnComment () {
   window.removeEventListener('keydown', onCloseEscape);
-  commentInput.removeEventListener('focus', removeEscListenerOnComment);
-};
-const addEscListenerOnComment = () => {
+}
+function addEscListenerOnComment () {
   window.addEventListener('keydown', onCloseEscape);
-  commentInput.removeEventListener('focus', addEscListenerOnComment);
-};
+}
 
 // Function for validation hashTags
 const hashTagValidate = (value) => {
@@ -113,8 +116,8 @@ fileUploader.addEventListener('change', () => {
 
   // Event listeners for use esc in focus in modal window
   hashTagInput.addEventListener('focus', removeEscListenerOnHashTag);
-  hashTagInput.addEventListener('focusout', addEscListenerOnHashTag);
   commentInput.addEventListener('focus', removeEscListenerOnComment);
+  hashTagInput.addEventListener('focusout', addEscListenerOnHashTag);
   commentInput.addEventListener('focusout', addEscListenerOnComment);
 
   pristine.addValidator(hashTagInput, hashTagValidate);
