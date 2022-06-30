@@ -33,22 +33,23 @@ const loadMoreComments = () => {
   }
 };
 
-// Function for close button
-const onCloseButton = () => {
+const closeModalWindow = () => {
   bigPublication.classList.add('hidden');
   body.classList.remove('modal-open');
   buttonCansel.removeEventListener('click', onCloseButton);
+  window.removeEventListener('keydown', onCloseEscape);
   loaderMoreComments.removeEventListener('click', loadMoreComments);
 };
-const onCloseEscape = (evt) => {
-  if(isEscape(evt)) {
-    bigPublication.classList.add('hidden');
-    body.classList.remove('modal-open');
-    window.removeEventListener('keydown', onCloseEscape);
-    loaderMoreComments.removeEventListener('click', loadMoreComments);
-  }
-};
 
+// Function for close button
+function onCloseButton() {
+  closeModalWindow();
+}
+function onCloseEscape(evt) {
+  if(isEscape(evt)) {
+    closeModalWindow();
+  }
+}
 
 const openBigPublication = (evt) => {
   const picture = evt.target.parentNode;
@@ -84,8 +85,9 @@ const openBigPublication = (evt) => {
   // Drawing comments
   const id = picture.dataset.id;
   const commentsFragment = document.createDocumentFragment();
+
   let i = 0;
-  for(const comment of publicationsArray[id].comments) {
+  publicationsArray[id].comments.forEach((comment) => {
     const commentElement = commentTemplate.cloneNode(true);
 
     commentElement.querySelector('.social__picture').src = comment.avatar;
@@ -97,7 +99,7 @@ const openBigPublication = (evt) => {
 
     commentsFragment.appendChild(commentElement);
     i++;
-  }
+  });
 
   commentBlock.appendChild(commentsFragment);
 
