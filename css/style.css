@@ -686,7 +686,6 @@ main {
   width: 450px;
 
   margin: 0 auto;
-  margin-bottom: 20px;
   padding: 5px 10px;
 
   font-family: "Open Sans", "Arial", sans-serif;
@@ -1407,4 +1406,25 @@ main {
 
 .hidden {
   display: none;
+}
+
+ /*Errors class for JS */
+.img-upload__field-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.img-upload__field-wrapper:not(:last-child) {
+  margin-bottom: 20px;
+}
+
+.img-upload__field-wrapper--error input {
+  outline: 3px solid #ff0000;
+}
+.img-upload__field-wrapper--error textarea {
+  outline: 3px solid #ff0000;
+}
+
+.img-upload__field-error-text {
+  margin-top: 5px;
 }
