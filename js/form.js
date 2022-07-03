@@ -293,7 +293,6 @@ fileUploader.addEventListener('change', () => {
   });
   effectSlider.noUiSlider.on('update', () => {
     effectInput.value = effectSlider.noUiSlider.get();
-    console.log(effectInput.value);
   });
   effectRadios.forEach((effectRadio) => {
     effectRadio.addEventListener('change', changeEffect);
