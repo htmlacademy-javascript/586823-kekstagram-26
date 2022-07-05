@@ -1,4 +1,5 @@
 import { isEscape } from './util.js';
+import {changeEffect} from './publicationEffects.js';
 
 const body = document.querySelector('body');
 const form = body.querySelector('.img-upload__form');
@@ -27,105 +28,9 @@ const effectSliderContainer = form.querySelector('.img-upload__effect-level');
 const effectSlider = effectSliderContainer.querySelector('.effect-level__slider');
 const effectRadios = form.querySelectorAll('.effects__radio');
 
-// Functions for change effects
-const changeInputStyleValue = (effectStyle) => {
-  switch(effectStyle) {
-    case 'grayscale':
-    case 'sepia':
-    case 'brightness':
-      effectSlider.noUiSlider.on('update', () => {
-        picturePreview.style.filter = `${effectStyle}(${  effectSlider.noUiSlider.get()})`;
-      });
-      break;
-    case 'invert':
-      effectSlider.noUiSlider.on('update', () => {
-        picturePreview.style.filter = `${effectStyle}(${  effectSlider.noUiSlider.get()}%)`;
-      });
-      break;
-    case 'blur':
-      effectSlider.noUiSlider.on('update', () => {
-        picturePreview.style.filter = `${effectStyle}(${  effectSlider.noUiSlider.get()}px)`;
-      });
-      break;
-  }
-};
-
-const changeEffect = (evt) => {
-  // reset
-  picturePreview.classList = '';
-  picturePreview.style = '';
-  const effectName = evt.target.id.split('-');
-  picturePreview.classList.add(`effects__preview--${  effectName[1]}`);
-
-  // range slider
-  if (picturePreview.classList.contains('effects__preview--none')) {
-    effectSliderContainer.classList.add('hidden');
-  } else {
-    effectSliderContainer.classList.remove('hidden');
-    switch(effectName[1]) {
-      case 'chrome':
-        effectSlider.noUiSlider.updateOptions({
-          range: {
-            min: 0,
-            max: 1,
-          },
-          step: 0.1,
-          start: 0,
-        });
-        changeInputStyleValue('grayscale');
-        break;
-      case 'sepia':
-        effectSlider.noUiSlider.updateOptions({
-          range: {
-            min: 0,
-            max: 1,
-          },
-          step: 0.1,
-          start: 0,
-        });
-        changeInputStyleValue('sepia');
-        break;
-      case 'marvin':
-        effectSlider.noUiSlider.updateOptions({
-          range: {
-            min: 0,
-            max: 100,
-          },
-          step: 1,
-          start: 0,
-        });
-        changeInputStyleValue('invert');
-        break;
-      case 'phobos':
-        effectSlider.noUiSlider.updateOptions({
-          range: {
-            min: 0,
-            max: 3,
-          },
-          step: 0.1,
-          start: 0,
-        });
-        changeInputStyleValue('blur');
-        break;
-      case 'heat':
-        effectSlider.noUiSlider.updateOptions({
-          range: {
-            min: 1,
-            max: 3,
-          },
-          step: 0.1,
-          start: 1,
-        });
-        changeInputStyleValue('brightness');
-        break;
-    }
-  }
-};
-
 // Function for scaleing picture
-inputScale.value = '100%';
-const inputScaleNumber = inputScale.value.split('%');
 const minusPictureScale = () => {
+  const inputScaleNumber = inputScale.value.split('%');
   if(inputScaleNumber[0] - stepScale <= stepScale) {
     inputScale.value = `${stepScale  }%`;
     inputScaleNumber[0] = stepScale;
@@ -133,19 +38,19 @@ const minusPictureScale = () => {
     inputScale.value = `${inputScaleNumber[0] - stepScale  }%`;
     inputScaleNumber[0] = inputScaleNumber[0] - stepScale;
   }
-
   picturePreview.style.transform = `scale(${inputScaleNumber[0]  }%)`;
 };
 const plusPictureScale = () => {
-  if(inputScaleNumber[0] + stepScale >= 100) {
+  const inputScaleArray = inputScale.value.split('%');
+  let inputScaleNumber = Number(inputScaleArray[0]);
+  if(inputScaleNumber + stepScale >= 100) {
     inputScale.value = '100%';
-    inputScaleNumber[0] = 100;
+    inputScaleNumber = 100;
   } else {
-    inputScale.value = `${inputScaleNumber[0] + stepScale  }%`;
-    inputScaleNumber[0] = inputScaleNumber[0] + stepScale;
+    inputScale.value = `${inputScaleNumber + stepScale  }%`;
+    inputScaleNumber = inputScaleNumber + stepScale;
   }
-
-  picturePreview.style.transform = `scale(${inputScaleNumber[0]  }%)`;
+  picturePreview.style.transform = `scale(${inputScaleNumber  }%)`;
 };
 
 const closeModalWindow = () => {
@@ -160,6 +65,10 @@ const closeModalWindow = () => {
   buttonCansel.removeEventListener('click', onCloseEscape);
   buttonMinusScale.removeEventListener('click', minusPictureScale);
   buttonMinusScale.removeEventListener('click', plusPictureScale);
+  inputScale.value = '100%';
+  picturePreview.style = '';
+  picturePreview.classList = '';
+  effectSlider.noUiSlider.destroy();
 };
 
 // function for close button
@@ -185,7 +94,6 @@ function removeEscListenerOnComment () {
 function addEscListenerOnComment () {
   window.addEventListener('keydown', onCloseEscape);
 }
-
 
 /*----------------FUNCTIONS FOR VALIDATION HASH-TAGS----------------*/
 // Checking for max 5 hashTags
@@ -219,14 +127,9 @@ const hashTagTextValidate = (value) => {
 // Checking for hashTags repetiton
 const hashTagRepeatValidate = (value) => {
   const hashTags = value.split(' ');
-  if(hashTags.length >= 2) {
-    for(let i = 0; i < hashTags.length - 1; i++) {
-      for(let j = i + 1; j < hashTags.length; j++) {
-        if (hashTags[i] === (hashTags[j]).toLowerCase()) {
-          return false;
-        }
-      }
-    }
+  const hahTagsSet = new Set (hashTags);
+  if (hahTagsSet.size !== hashTags.length) {
+    return false;
   }
 
   return true;
@@ -257,6 +160,7 @@ fileUploader.addEventListener('change', () => {
     });
   };
   fileReader.readAsDataURL(fileUploader.files[0]);
+  picturePreview.style = '';
 
   // Cansel button
   buttonCansel.addEventListener('click', onCloseButton);
@@ -265,6 +169,8 @@ fileUploader.addEventListener('change', () => {
 
   /*----------------PICTURE SCALE----------------*/
   // Event listeners on + and - buttons
+  inputScale.value = '100%';
+  picturePreview.style.transform = 'scale(100%)';
   buttonMinusScale.addEventListener('click', minusPictureScale);
   buttonPlusScale.addEventListener('click', plusPictureScale);
 
@@ -276,7 +182,7 @@ fileUploader.addEventListener('change', () => {
       min: 0,
       max: 100,
     },
-    start: 100,
+    start: 0,
     step: 1,
     connect: 'lower',
     format: {
@@ -317,3 +223,5 @@ fileUploader.addEventListener('change', () => {
     pristine.validate();
   });
 });
+
+export {effectSlider, picturePreview, effectSliderContainer, inputScale};
