@@ -1,5 +1,6 @@
-import { isEscape } from './util.js';
+import { isEscape, buttonDisabled, buttonActive } from './util.js';
 import {changeEffect} from './publicationEffects.js';
+import {addSuccesfulMessage, addErrorMessage} from './formMessage.js';
 
 const body = document.querySelector('body');
 const form = body.querySelector('.img-upload__form');
@@ -10,6 +11,8 @@ const buttonCansel = form.querySelector('#upload-cancel');
 const effectsPreview = form.querySelectorAll('.effects__preview');
 const hashTagInput = form.querySelector('.text__hashtags');
 const commentInput = form.querySelector('.text__description');
+const formSubmitButton = form.querySelector('.img-upload__submit');
+const inputContainers = form.querySelectorAll('.img-upload__field-wrapper');
 const pristine = new Pristine(form, {
   classTo: 'img-upload__field-wrapper',
   errorClass: 'img-upload__field-wrapper--error',
@@ -26,7 +29,7 @@ const stepScale = 25;
 const effectInput = form.querySelector('.effect-level__value');
 const effectSliderContainer = form.querySelector('.img-upload__effect-level');
 const effectSlider = effectSliderContainer.querySelector('.effect-level__slider');
-const effectRadios = form.querySelectorAll('.effects__radio');
+const effectRadios = form.querySelector('.effects__list');
 
 // Function for scaleing picture
 const minusPictureScale = () => {
@@ -66,9 +69,18 @@ const closeModalWindow = () => {
   buttonMinusScale.removeEventListener('click', minusPictureScale);
   buttonMinusScale.removeEventListener('click', plusPictureScale);
   inputScale.value = '100%';
+  hashTagInput.value = '';
   picturePreview.style = '';
   picturePreview.classList = '';
   effectSlider.noUiSlider.destroy();
+  inputContainers.forEach((container) => {
+    container.classList.remove('img-upload__field-wrapper--error');
+  });
+  // const pristineErrs = form.querySelectorAll('.pristine-error');
+  // pristineErrs.forEach((err) => {
+  //   err.remove();
+  // });
+  buttonActive(formSubmitButton, 'Опубликовать');
 };
 
 // function for close button
@@ -200,9 +212,8 @@ fileUploader.addEventListener('change', () => {
   effectSlider.noUiSlider.on('update', () => {
     effectInput.value = effectSlider.noUiSlider.get();
   });
-  effectRadios.forEach((effectRadio) => {
-    effectRadio.addEventListener('change', changeEffect);
-  });
+
+  effectRadios.addEventListener('change', changeEffect);
 
 
   /*----------------INPUT VALIDATION----------------*/
@@ -217,10 +228,30 @@ fileUploader.addEventListener('change', () => {
   pristine.addValidator(hashTagInput, hashTagRepeatValidate, 'Хэш-теги не должны повторяться');
   pristine.addValidator(hashTagInput, hashTagTextValidate, 'Хэш-тег должен начинаться с # и содержать только буквы и символы');
   pristine.addValidator(commentInput, commentValidate, 'Максимальное количество символов 140');
-
+  let isError = false;
   form.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    pristine.validate();
+    if(pristine.validate()) {
+      const formData = new FormData(evt.target);
+
+
+      fetch('https://26.javascript.pages.academy/kekstagram',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      )
+        .catch(() => {
+          addErrorMessage();
+          isError = true;
+        }).then(() => {
+          if(!isError) {
+            buttonDisabled(formSubmitButton, 'Публикуется...');
+            closeModalWindow();
+            addSuccesfulMessage();
+          }
+        });
+    }
   });
 });
 

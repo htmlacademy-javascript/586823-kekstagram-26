@@ -1,4 +1,4 @@
-import {publicationsArray} from './publications.js';
+import {publicationArray} from './api.js';
 import {isEscape} from './util.js';
 
 const pictures = document.querySelector('.pictures');
@@ -87,7 +87,7 @@ const openBigPublication = (evt) => {
   const commentsFragment = document.createDocumentFragment();
 
   let i = 0;
-  publicationsArray[id].comments.forEach((comment) => {
+  publicationArray[id].comments.forEach((comment) => {
     const commentElement = commentTemplate.cloneNode(true);
 
     commentElement.querySelector('.social__picture').src = comment.avatar;

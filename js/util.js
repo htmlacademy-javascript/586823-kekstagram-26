@@ -15,4 +15,14 @@ getIsStringSizeAvailable('hi', 5);
 
 const isEscape = (evt) => evt.key === 'Escape';
 
-export {getRandomNumber, getIsStringSizeAvailable, isEscape};
+const buttonDisabled = (button, message = button.textContent) => {
+  button.disabled = true;
+  button.textContent = message;
+};
+
+const buttonActive = (button, message = button.textContent) => {
+  button.disabled = false;
+  button.textContent = message;
+};
+
+export {getRandomNumber, getIsStringSizeAvailable, isEscape, buttonDisabled, buttonActive};
