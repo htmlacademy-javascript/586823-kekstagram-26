@@ -6,12 +6,7 @@ const getRandomNumber = (from, to) => {
   return Math.round(Math.random() * (to - from) + from);
 };
 
-const getIsStringSizeAvailable = (string, availableLength) => {
-  if(string.length <= availableLength) {return true;}
-
-  return false;
-};
-getIsStringSizeAvailable('hi', 5);
+const getIsStringSizeAvailable = (string, availableLength) => string.length <= availableLength;
 
 const isEscape = (evt) => evt.key === 'Escape';
 

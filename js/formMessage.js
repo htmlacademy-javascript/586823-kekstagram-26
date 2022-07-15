@@ -9,7 +9,7 @@ const addSuccesfulMessage = () => {
   const successButton = messageElement.querySelector('.success__button');
 
   function deleteMessage() {
-    messageElement.remove();
+    body.querySelector('.success').remove();
     successButton.removeEventListener('click', deleteMessageButton);
     window.removeEventListener('keydown', deleteMessageEsc);
     window.removeEventListener('click', deleteMessageClick);
@@ -41,7 +41,7 @@ const addErrorMessage = () => {
   messageElement.style = 'z-index: 2';
 
   function deleteMessage() {
-    messageElement.remove();
+    body.querySelector('.error').remove();
     errorButton.removeEventListener('click', deleteMessageButton);
     window.removeEventListener('keydown', deleteMessageEsc);
     window.removeEventListener('click', deleteMessageClick);
