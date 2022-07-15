@@ -1,5 +1,8 @@
-import { isEscape } from './util.js';
+import { isEscape, buttonActive } from './util.js';
+import {hashTagCountValidate, hashTagTextValidate, hashTagRepeatValidate, commentValidate} from './ValidationFunctions.js';
+import {minusPictureScale, plusPictureScale} from './publicationScaling.js';
 import {changeEffect} from './publicationEffects.js';
+import {sendForm} from './api.js';
 
 const body = document.querySelector('body');
 const form = body.querySelector('.img-upload__form');
@@ -10,6 +13,8 @@ const buttonCansel = form.querySelector('#upload-cancel');
 const effectsPreview = form.querySelectorAll('.effects__preview');
 const hashTagInput = form.querySelector('.text__hashtags');
 const commentInput = form.querySelector('.text__description');
+const formSubmitButton = form.querySelector('.img-upload__submit');
+const inputContainers = form.querySelectorAll('.img-upload__field-wrapper');
 const pristine = new Pristine(form, {
   classTo: 'img-upload__field-wrapper',
   errorClass: 'img-upload__field-wrapper--error',
@@ -22,36 +27,31 @@ const pristine = new Pristine(form, {
 const buttonMinusScale = form.querySelector('.scale__control--smaller');
 const buttonPlusScale = form.querySelector('.scale__control--bigger');
 const inputScale = form.querySelector('.scale__control--value');
-const stepScale = 25;
 const effectInput = form.querySelector('.effect-level__value');
 const effectSliderContainer = form.querySelector('.img-upload__effect-level');
 const effectSlider = effectSliderContainer.querySelector('.effect-level__slider');
-const effectRadios = form.querySelectorAll('.effects__radio');
-
-// Function for scaleing picture
-const minusPictureScale = () => {
-  const inputScaleNumber = inputScale.value.split('%');
-  if(inputScaleNumber[0] - stepScale <= stepScale) {
-    inputScale.value = `${stepScale  }%`;
-    inputScaleNumber[0] = stepScale;
-  } else {
-    inputScale.value = `${inputScaleNumber[0] - stepScale  }%`;
-    inputScaleNumber[0] = inputScaleNumber[0] - stepScale;
-  }
-  picturePreview.style.transform = `scale(${inputScaleNumber[0]  }%)`;
-};
-const plusPictureScale = () => {
-  const inputScaleArray = inputScale.value.split('%');
-  let inputScaleNumber = Number(inputScaleArray[0]);
-  if(inputScaleNumber + stepScale >= 100) {
-    inputScale.value = '100%';
-    inputScaleNumber = 100;
-  } else {
-    inputScale.value = `${inputScaleNumber + stepScale  }%`;
-    inputScaleNumber = inputScaleNumber + stepScale;
-  }
-  picturePreview.style.transform = `scale(${inputScaleNumber  }%)`;
-};
+const effectRadios = form.querySelector('.effects__list');
+const effectRadioNone = form.querySelector('#effect-none');
+noUiSlider.create(effectSlider, {
+  range: {
+    min: 0,
+    max: 100,
+  },
+  start: 0,
+  step: 1,
+  connect: 'lower',
+  format: {
+    to: function (value) {
+      if (Number.isInteger(value)) {
+        return value.toFixed(0);
+      }
+      return value.toFixed(1);
+    },
+    from: function (value) {
+      return parseFloat(value);
+    },
+  },
+});
 
 const closeModalWindow = () => {
   publicationEditor.classList.add('hidden');
@@ -66,9 +66,15 @@ const closeModalWindow = () => {
   buttonMinusScale.removeEventListener('click', minusPictureScale);
   buttonMinusScale.removeEventListener('click', plusPictureScale);
   inputScale.value = '100%';
-  picturePreview.style = '';
+  hashTagInput.value = '';
   picturePreview.classList = '';
-  effectSlider.noUiSlider.destroy();
+  picturePreview.style = '';
+  effectRadioNone.checked = true;
+  effectSlider.noUiSlider.reset();
+  inputContainers.forEach((container) => {
+    container.classList.remove('img-upload__field-wrapper--error');
+  });
+  buttonActive(formSubmitButton, 'Опубликовать');
 };
 
 // function for close button
@@ -94,56 +100,6 @@ function removeEscListenerOnComment () {
 function addEscListenerOnComment () {
   window.addEventListener('keydown', onCloseEscape);
 }
-
-/*----------------FUNCTIONS FOR VALIDATION HASH-TAGS----------------*/
-// Checking for max 5 hashTags
-const hashTagCountValidate = (value) => {
-  const hashTags = value.split(' ');
-  if(hashTags.length > 5) {
-    return false;
-  }
-  return true;
-};
-
-// Checking for regular expression
-const hashTagTextValidate = (value) => {
-  const hashTagTerms = /^#[A-Za-zA-Яа-яЁё0-9]{1,20}$/;
-  const hashTags = value.split(' ');
-
-  if (hashTags[0] !== '') {
-    let notValidCounter = 0;
-    hashTags.forEach((hashTag) => {
-      if(!hashTagTerms.test(hashTag)) {
-        notValidCounter++;
-      }
-    });
-    if(notValidCounter > 0) {
-      return false;
-    }
-  }
-  return true;
-};
-
-// Checking for hashTags repetiton
-const hashTagRepeatValidate = (value) => {
-  const hashTags = value.split(' ');
-  const hahTagsSet = new Set (hashTags);
-  if (hahTagsSet.size !== hashTags.length) {
-    return false;
-  }
-
-  return true;
-};
-
-// Function for validation comments
-const commentValidate = (value) => {
-  if(value.length > 140) {
-    return false;
-  }
-
-  return true;
-};
-
 
 fileUploader.addEventListener('change', () => {
   // Show publication editor
@@ -177,32 +133,11 @@ fileUploader.addEventListener('change', () => {
   /*----------------EFFECTS----------------*/
   picturePreview.classList.add('effects__preview--none');
   effectSliderContainer.classList.add('hidden');
-  noUiSlider.create(effectSlider, {
-    range: {
-      min: 0,
-      max: 100,
-    },
-    start: 0,
-    step: 1,
-    connect: 'lower',
-    format: {
-      to: function (value) {
-        if (Number.isInteger(value)) {
-          return value.toFixed(0);
-        }
-        return value.toFixed(1);
-      },
-      from: function (value) {
-        return parseFloat(value);
-      },
-    },
-  });
   effectSlider.noUiSlider.on('update', () => {
     effectInput.value = effectSlider.noUiSlider.get();
   });
-  effectRadios.forEach((effectRadio) => {
-    effectRadio.addEventListener('change', changeEffect);
-  });
+
+  effectRadios.addEventListener('change', changeEffect);
 
 
   /*----------------INPUT VALIDATION----------------*/
@@ -217,11 +152,13 @@ fileUploader.addEventListener('change', () => {
   pristine.addValidator(hashTagInput, hashTagRepeatValidate, 'Хэш-теги не должны повторяться');
   pristine.addValidator(hashTagInput, hashTagTextValidate, 'Хэш-тег должен начинаться с # и содержать только буквы и символы');
   pristine.addValidator(commentInput, commentValidate, 'Максимальное количество символов 140');
-
   form.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    pristine.validate();
+    if(pristine.validate()) {
+      const formData = new FormData(evt.target);
+      sendForm(formData);
+    }
   });
 });
 
-export {effectSlider, picturePreview, effectSliderContainer, inputScale};
+export {effectSlider, picturePreview, effectSliderContainer, inputScale, closeModalWindow, formSubmitButton};

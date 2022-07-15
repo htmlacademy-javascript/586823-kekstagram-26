@@ -6,13 +6,18 @@ const getRandomNumber = (from, to) => {
   return Math.round(Math.random() * (to - from) + from);
 };
 
-const getIsStringSizeAvailable = (string, availableLength) => {
-  if(string.length <= availableLength) {return true;}
-
-  return false;
-};
-getIsStringSizeAvailable('hi', 5);
+const getIsStringSizeAvailable = (string, availableLength) => string.length <= availableLength;
 
 const isEscape = (evt) => evt.key === 'Escape';
 
-export {getRandomNumber, getIsStringSizeAvailable, isEscape};
+const buttonDisabled = (button, message = button.textContent) => {
+  button.disabled = true;
+  button.textContent = message;
+};
+
+const buttonActive = (button, message = button.textContent) => {
+  button.disabled = false;
+  button.textContent = message;
+};
+
+export {getRandomNumber, getIsStringSizeAvailable, isEscape, buttonDisabled, buttonActive};
