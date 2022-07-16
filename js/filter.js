@@ -1,5 +1,6 @@
 import {publicationArray} from './api.js';
 import { generetePublicationsArray } from './publications.js';
+import {debounce} from './util.js';
 
 const filter = document.querySelector('.img-filters');
 const buttonContainer = filter.querySelector('.img-filters__form');
@@ -62,4 +63,4 @@ const changeFilter = (evt) => {
   }
 };
 
-buttonContainer.addEventListener('click', changeFilter);
+buttonContainer.addEventListener('click', debounce(changeFilter));
