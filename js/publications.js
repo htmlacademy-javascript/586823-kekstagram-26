@@ -3,8 +3,15 @@ const pictureTemplate = document.querySelector('#picture').content.querySelector
 
 const publicationsFragment = document.createDocumentFragment();
 
-let i = 0;
+
 const generetePublicationsArray = (publicationsArray) => {
+  let i = 0;
+  const publications = pictureBlock.querySelectorAll('.picture');
+  if(publications.length !== 0) {
+    publications.forEach((publication) => {
+      publication.remove();
+    });
+  }
   publicationsArray.forEach(({url, likes, comments}) => {
     const publicationElement = pictureTemplate.cloneNode(true);
     publicationElement.querySelector('.picture__img').src = url;
