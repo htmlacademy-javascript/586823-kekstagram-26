@@ -7,7 +7,6 @@ const buttonContainer = filter.querySelector('.img-filters__form');
 const buttons = buttonContainer.querySelectorAll('.img-filters__button');
 filter.classList.remove('img-filters--inactive');
 
-// Function for show random publication
 const showRandomPublications = (publicationCount, publicationArr) => {
   const publicationForRegenerate = [];
   const notUsedIndex = [];
