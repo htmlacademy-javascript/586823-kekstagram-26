@@ -1,5 +1,5 @@
 import { buttonDisabled} from './util.js';
-import {addSuccesfulMessage, addErrorMessage} from './formMessage.js';
+import {addSuccesfulMessage, addErrorMessage} from './form-message.js';
 import {closeModalWindow, formSubmitButton} from './form.js';
 import { generetePublicationsArray } from './publications.js';
 
@@ -13,7 +13,6 @@ fetch(DATA_SERVER)
     publicationArray = publications;
     generetePublicationsArray(publicationArray);
   });
-let isError = false;
 const sendForm = (formData) => {
   fetch(SERVER,
     {
@@ -23,13 +22,10 @@ const sendForm = (formData) => {
   )
     .catch(() => {
       addErrorMessage();
-      isError = true;
     }).then(() => {
-      if(!isError) {
-        buttonDisabled(formSubmitButton, 'Публикуется...');
-        closeModalWindow();
-        addSuccesfulMessage();
-      }
+      buttonDisabled(formSubmitButton, 'Публикуется...');
+      closeModalWindow();
+      addSuccesfulMessage();
     });
 };
 

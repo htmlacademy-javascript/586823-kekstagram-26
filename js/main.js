@@ -1,5 +1,5 @@
 import './publications.js';
 import './filter.js';
-import './bigPublication.js';
+import './big-publication.js';
 import './form.js';
 

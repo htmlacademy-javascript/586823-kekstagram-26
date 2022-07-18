@@ -1,7 +1,7 @@
 import { isEscape, buttonActive } from './util.js';
-import {hashTagCountValidate, hashTagTextValidate, hashTagRepeatValidate, commentValidate} from './ValidationFunctions.js';
-import {minusPictureScale, plusPictureScale} from './publicationScaling.js';
-import {changeEffect} from './publicationEffects.js';
+import {hashTagCountValidate, hashTagTextValidate, hashTagRepeatValidate, commentValidate} from './validation-functions.js';
+import {minusPictureScale, plusPictureScale} from './publication-scaling.js';
+import {changeEffect} from './publication-effects.js';
 import {sendForm} from './api.js';
 
 const body = document.querySelector('body');
@@ -53,6 +53,14 @@ noUiSlider.create(effectSlider, {
   },
 });
 
+const formFunction = (evt) => {
+  evt.preventDefault();
+  if(pristine.validate()) {
+    const formData = new FormData(evt.target);
+    sendForm(formData);
+  }
+};
+
 const closeModalWindow = () => {
   publicationEditor.classList.add('hidden');
   body.classList.remove('modal-open');
@@ -75,6 +83,11 @@ const closeModalWindow = () => {
     container.classList.remove('img-upload__field-wrapper--error');
   });
   buttonActive(formSubmitButton, 'Опубликовать');
+  form.removeEventListener('submit', formFunction);
+  const allErrorSpan = form.querySelectorAll('.pristine-error');
+  allErrorSpan.forEach((errorSpan) => {
+    errorSpan.textContent = '';
+  });
 };
 
 // function for close button
@@ -152,13 +165,7 @@ fileUploader.addEventListener('change', () => {
   pristine.addValidator(hashTagInput, hashTagRepeatValidate, 'Хэш-теги не должны повторяться');
   pristine.addValidator(hashTagInput, hashTagTextValidate, 'Хэш-тег должен начинаться с # и содержать только буквы и символы');
   pristine.addValidator(commentInput, commentValidate, 'Максимальное количество символов 140');
-  form.addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    if(pristine.validate()) {
-      const formData = new FormData(evt.target);
-      sendForm(formData);
-    }
-  });
+  form.addEventListener('submit', formFunction);
 });
 
 export {effectSlider, picturePreview, effectSliderContainer, inputScale, closeModalWindow, formSubmitButton};
