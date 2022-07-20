@@ -61,4 +61,8 @@ const changeFilter = (evt) => {
   }
 };
 
-buttonContainer.addEventListener('click', debounce(changeFilter));
+const addFilterListener = () => {
+  buttonContainer.addEventListener('click', debounce(changeFilter));
+};
+
+export {addFilterListener};

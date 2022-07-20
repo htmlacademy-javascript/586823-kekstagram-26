@@ -7,12 +7,15 @@ const DATA_SERVER = 'https://26.javascript.pages.academy/kekstagram/data';
 const SERVER = 'https://26.javascript.pages.academy/kekstagram';
 
 let publicationArray;
-fetch(DATA_SERVER)
-  .then((response) => response.json())
-  .then((publications) => {
-    publicationArray = publications;
-    generetePublicationsArray(publicationArray);
-  });
+const generetePublications = () => {
+  fetch(DATA_SERVER)
+    .then((response) => response.json())
+    .then((publications) => {
+      publicationArray = publications;
+      generetePublicationsArray(publicationArray);
+    });
+};
+
 const sendForm = (formData) => {
   fetch(SERVER,
     {
@@ -29,4 +32,4 @@ const sendForm = (formData) => {
     });
 };
 
-export {publicationArray, sendForm};
+export {publicationArray, sendForm, generetePublications};
