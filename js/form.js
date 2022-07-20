@@ -1,7 +1,7 @@
 import { isEscape, buttonActive } from './util.js';
-import {hashTagCountValidate, hashTagTextValidate, hashTagRepeatValidate, commentValidate} from './ValidationFunctions.js';
-import {minusPictureScale, plusPictureScale} from './publicationScaling.js';
-import {changeEffect} from './publicationEffects.js';
+import {hashTagCountValidate, hashTagTextValidate, hashTagRepeatValidate, commentValidate} from './validation-functions.js';
+import {minusPictureScale, plusPictureScale} from './publication-scaling.js';
+import {changeEffect} from './publication-effects.js';
 import {sendForm} from './api.js';
 
 const body = document.querySelector('body');
@@ -53,6 +53,14 @@ noUiSlider.create(effectSlider, {
   },
 });
 
+const formFunction = (evt) => {
+  evt.preventDefault();
+  if(pristine.validate()) {
+    const formData = new FormData(evt.target);
+    sendForm(formData);
+  }
+};
+
 const closeModalWindow = () => {
   publicationEditor.classList.add('hidden');
   body.classList.remove('modal-open');
@@ -67,6 +75,7 @@ const closeModalWindow = () => {
   buttonMinusScale.removeEventListener('click', plusPictureScale);
   inputScale.value = '100%';
   hashTagInput.value = '';
+  commentInput.value = '';
   picturePreview.classList = '';
   picturePreview.style = '';
   effectRadioNone.checked = true;
@@ -75,6 +84,11 @@ const closeModalWindow = () => {
     container.classList.remove('img-upload__field-wrapper--error');
   });
   buttonActive(formSubmitButton, 'Опубликовать');
+  form.removeEventListener('submit', formFunction);
+  const allErrorSpan = form.querySelectorAll('.pristine-error');
+  allErrorSpan.forEach((errorSpan) => {
+    errorSpan.textContent = '';
+  });
 };
 
 // function for close button
@@ -101,64 +115,62 @@ function addEscListenerOnComment () {
   window.addEventListener('keydown', onCloseEscape);
 }
 
-fileUploader.addEventListener('change', () => {
-  // Show publication editor
-  publicationEditor.classList.remove('hidden');
-  body.classList.add('modal-open');
+// Pristine Validators
+pristine.addValidator(hashTagInput, hashTagCountValidate, 'Максимальное количество хэш-тегов 5');
+pristine.addValidator(hashTagInput, hashTagRepeatValidate, 'Хэш-теги не должны повторяться');
+pristine.addValidator(hashTagInput, hashTagTextValidate, 'Хэш-тег должен начинаться с # и содержать только буквы и символы');
+pristine.addValidator(commentInput, commentValidate, 'Максимальное количество символов 140');
 
-  // Show uploaded picture
-  const fileReader = new FileReader();
-  fileReader.onload = (evt) => {
-    picturePreview.src = evt.target.result;
+const addFormListener = () => {
+  fileUploader.addEventListener('change', () => {
+    // Show publication editor
+    publicationEditor.classList.remove('hidden');
+    body.classList.add('modal-open');
 
-    effectsPreview.forEach((effectPreview) => {
-      effectPreview.style.backgroundImage = `url(${picturePreview.src})`;
+    // Show uploaded picture
+    const fileReader = new FileReader();
+    fileReader.onload = (evt) => {
+      picturePreview.src = evt.target.result;
+
+      effectsPreview.forEach((effectPreview) => {
+        effectPreview.style.backgroundImage = `url(${picturePreview.src})`;
+      });
+    };
+    fileReader.readAsDataURL(fileUploader.files[0]);
+    picturePreview.style = '';
+
+    // Cansel button
+    buttonCansel.addEventListener('click', onCloseButton);
+    window.addEventListener('keydown', onCloseEscape);
+
+
+    /*----------------PICTURE SCALE----------------*/
+    // Event listeners on + and - buttons
+    inputScale.value = '100%';
+    picturePreview.style.transform = 'scale(100%)';
+    buttonMinusScale.addEventListener('click', minusPictureScale);
+    buttonPlusScale.addEventListener('click', plusPictureScale);
+
+    /*----------------EFFECTS----------------*/
+    picturePreview.classList.add('effects__preview--none');
+    effectSliderContainer.classList.add('hidden');
+    effectSlider.noUiSlider.on('update', () => {
+      effectInput.value = effectSlider.noUiSlider.get();
     });
-  };
-  fileReader.readAsDataURL(fileUploader.files[0]);
-  picturePreview.style = '';
 
-  // Cansel button
-  buttonCansel.addEventListener('click', onCloseButton);
-  window.addEventListener('keydown', onCloseEscape);
+    effectRadios.addEventListener('change', changeEffect);
 
 
-  /*----------------PICTURE SCALE----------------*/
-  // Event listeners on + and - buttons
-  inputScale.value = '100%';
-  picturePreview.style.transform = 'scale(100%)';
-  buttonMinusScale.addEventListener('click', minusPictureScale);
-  buttonPlusScale.addEventListener('click', plusPictureScale);
+    /*----------------INPUT VALIDATION----------------*/
+    // Event listeners for use esc in focus in modal window
+    hashTagInput.addEventListener('focus', removeEscListenerOnHashTag);
+    commentInput.addEventListener('focus', removeEscListenerOnComment);
+    hashTagInput.addEventListener('focusout', addEscListenerOnHashTag);
+    commentInput.addEventListener('focusout', addEscListenerOnComment);
 
-  /*----------------EFFECTS----------------*/
-  picturePreview.classList.add('effects__preview--none');
-  effectSliderContainer.classList.add('hidden');
-  effectSlider.noUiSlider.on('update', () => {
-    effectInput.value = effectSlider.noUiSlider.get();
+    form.addEventListener('submit', formFunction);
   });
+};
 
-  effectRadios.addEventListener('change', changeEffect);
 
-
-  /*----------------INPUT VALIDATION----------------*/
-  // Event listeners for use esc in focus in modal window
-  hashTagInput.addEventListener('focus', removeEscListenerOnHashTag);
-  commentInput.addEventListener('focus', removeEscListenerOnComment);
-  hashTagInput.addEventListener('focusout', addEscListenerOnHashTag);
-  commentInput.addEventListener('focusout', addEscListenerOnComment);
-
-  // Pristine Validators
-  pristine.addValidator(hashTagInput, hashTagCountValidate, 'Максимальное количество хэш-тегов 5');
-  pristine.addValidator(hashTagInput, hashTagRepeatValidate, 'Хэш-теги не должны повторяться');
-  pristine.addValidator(hashTagInput, hashTagTextValidate, 'Хэш-тег должен начинаться с # и содержать только буквы и символы');
-  pristine.addValidator(commentInput, commentValidate, 'Максимальное количество символов 140');
-  form.addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    if(pristine.validate()) {
-      const formData = new FormData(evt.target);
-      sendForm(formData);
-    }
-  });
-});
-
-export {effectSlider, picturePreview, effectSliderContainer, inputScale, closeModalWindow, formSubmitButton};
+export {addFormListener, effectSlider, picturePreview, effectSliderContainer, inputScale, closeModalWindow, formSubmitButton};

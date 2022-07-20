@@ -7,14 +7,13 @@ const buttonContainer = filter.querySelector('.img-filters__form');
 const buttons = buttonContainer.querySelectorAll('.img-filters__button');
 filter.classList.remove('img-filters--inactive');
 
-// Function for show random publication
 const showRandomPublications = (publicationCount, publicationArr) => {
   const publicationForRegenerate = [];
   const notUsedIndex = [];
   const randomUniqIndex = [];
-  for (let i = 0; i < publicationArr.length; i++) {
+  publicationArr.forEach((element, i) => {
     notUsedIndex[i] = i;
-  }
+  });
 
   for (let i = 0; i < publicationCount; i++) {
     let randomIndex;
@@ -25,10 +24,9 @@ const showRandomPublications = (publicationCount, publicationArr) => {
     randomUniqIndex[i] = notUsedIndex[randomIndex];
     notUsedIndex[randomIndex] = 'q';
   }
-
-  for(let i = 0; i < randomUniqIndex.length; i++) {
-    publicationForRegenerate[i] = publicationArray[randomUniqIndex[i]];
-  }
+  randomUniqIndex.forEach((randomIndex, i) => {
+    publicationForRegenerate[i] = publicationArray[randomIndex];
+  });
   generetePublicationsArray(publicationForRegenerate);
 };
 
@@ -63,4 +61,8 @@ const changeFilter = (evt) => {
   }
 };
 
-buttonContainer.addEventListener('click', debounce(changeFilter));
+const addFilterListener = () => {
+  buttonContainer.addEventListener('click', debounce(changeFilter));
+};
+
+export {addFilterListener};

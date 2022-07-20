@@ -106,4 +106,8 @@ const openBigPublication = (evt) => {
   loaderMoreComments.addEventListener('click', loadMoreComments);
 };
 
-pictures.addEventListener('click', openBigPublication);
+const openPublication = () => {
+  pictures.addEventListener('click', openBigPublication);
+};
+
+export {openPublication};

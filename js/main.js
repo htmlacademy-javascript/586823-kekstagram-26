@@ -1,5 +1,9 @@
-import './publications.js';
-import './filter.js';
-import './bigPublication.js';
-import './form.js';
+import {generetePublications} from './api.js';
+import {addFilterListener} from './filter.js';
+import {openPublication} from './big-publication.js';
+import {addFormListener} from './form.js';
 
+generetePublications();
+addFilterListener();
+openPublication();
+addFormListener();
