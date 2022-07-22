@@ -1,14 +1,13 @@
-const pictureBlock = document.querySelector('.pictures');
-const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+const pictureBlockElement = document.querySelector('.pictures');
+const pictureTemplateElement = document.querySelector('#picture').content.querySelector('.picture');
 
 const publicationsFragment = document.createDocumentFragment();
-
 
 const generetePublicationsArray = (publicationsArray, isFirst = true) => {
   if(isFirst) {
     let i = 0;
     publicationsArray.forEach(({url, likes, comments}) => {
-      const publicationElement = pictureTemplate.cloneNode(true);
+      const publicationElement = pictureTemplateElement.cloneNode(true);
       publicationElement.querySelector('.picture__img').src = url;
       publicationElement.querySelector('.picture__comments').textContent = comments.length;
       publicationElement.querySelector('.picture__likes').textContent = likes;
@@ -17,9 +16,9 @@ const generetePublicationsArray = (publicationsArray, isFirst = true) => {
       i++;
     });
   } else {
-    const publications = pictureBlock.querySelectorAll('.picture');
+    const publications = pictureBlockElement.querySelectorAll('.picture');
     publicationsArray.forEach(({url, likes, comments, id}) => {
-      const publicationElement = pictureTemplate.cloneNode(true);
+      const publicationElement = pictureTemplateElement.cloneNode(true);
       publicationElement.querySelector('.picture__img').src = url;
       publicationElement.querySelector('.picture__comments').textContent = comments.length;
       publicationElement.querySelector('.picture__likes').textContent = likes;
@@ -31,7 +30,7 @@ const generetePublicationsArray = (publicationsArray, isFirst = true) => {
     });
   }
 
-  pictureBlock.appendChild(publicationsFragment);
+  pictureBlockElement.appendChild(publicationsFragment);
 };
 
 export {generetePublicationsArray};

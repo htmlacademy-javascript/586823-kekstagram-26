@@ -67,4 +67,4 @@ const validateHashTagRepeat = (value) => {
 // Function for validation comments
 const validateComment = (value) => getIsStringSizeAvailable(value, COMMENT_MAX_LENGTH);
 
-export {validateHashTagCount as hashTagCountValidate, validateHashTagText as hashTagTextValidate, validateHashTagRepeat as hashTagRepeatValidate, validateComment as commentValidate, validateHashTagSize as hashTagSizeValidate};
+export {validateHashTagCount, validateHashTagText, validateHashTagRepeat, validateComment, validateHashTagSize};
