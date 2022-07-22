@@ -1,5 +1,5 @@
 import { isEscape, buttonActive } from './util.js';
-import {hashTagCountValidate, hashTagTextValidate, hashTagRepeatValidate, commentValidate} from './validation-functions.js';
+import {hashTagCountValidate, hashTagTextValidate, hashTagRepeatValidate, commentValidate, hashTagSizeValidate} from './validation-functions.js';
 import {minusPictureScale, plusPictureScale} from './publication-scaling.js';
 import {changeEffect} from './publication-effects.js';
 import {sendForm} from './api.js';
@@ -9,7 +9,7 @@ const form = body.querySelector('.img-upload__form');
 const publicationEditor = form.querySelector('.img-upload__overlay');
 const fileUploader = form.querySelector('#upload-file');
 const picturePreview = form.querySelector('.img-upload__preview').querySelector('img');
-const buttonCansel = form.querySelector('#upload-cancel');
+const buttonCancel = form.querySelector('#upload-cancel');
 const effectsPreview = form.querySelectorAll('.effects__preview');
 const hashTagInput = form.querySelector('.text__hashtags');
 const commentInput = form.querySelector('.text__description');
@@ -53,7 +53,7 @@ noUiSlider.create(effectSlider, {
   },
 });
 
-const formFunction = (evt) => {
+const onFormSubmit = (evt) => {
   evt.preventDefault();
   if(pristine.validate()) {
     const formData = new FormData(evt.target);
@@ -69,8 +69,8 @@ const closeModalWindow = () => {
   commentInput.removeEventListener('focusout', addEscListenerOnComment);
   hashTagInput.removeEventListener('focus', removeEscListenerOnHashTag);
   commentInput.removeEventListener('focus', removeEscListenerOnComment);
-  buttonCansel.removeEventListener('click', onCloseButton);
-  buttonCansel.removeEventListener('click', onCloseEscape);
+  buttonCancel.removeEventListener('click', onButtonClose);
+  buttonCancel.removeEventListener('click', onCloseEscape);
   buttonMinusScale.removeEventListener('click', minusPictureScale);
   buttonMinusScale.removeEventListener('click', plusPictureScale);
   inputScale.value = '100%';
@@ -84,7 +84,7 @@ const closeModalWindow = () => {
     container.classList.remove('img-upload__field-wrapper--error');
   });
   buttonActive(formSubmitButton, 'Опубликовать');
-  form.removeEventListener('submit', formFunction);
+  form.removeEventListener('submit', onFormSubmit);
   const allErrorSpan = form.querySelectorAll('.pristine-error');
   allErrorSpan.forEach((errorSpan) => {
     errorSpan.textContent = '';
@@ -92,7 +92,7 @@ const closeModalWindow = () => {
 };
 
 // function for close button
-function onCloseButton() {
+function onButtonClose() {
   closeModalWindow();
 }
 function onCloseEscape (evt) {
@@ -120,6 +120,7 @@ pristine.addValidator(hashTagInput, hashTagCountValidate, 'Максимальн�
 pristine.addValidator(hashTagInput, hashTagRepeatValidate, 'Хэш-теги не должны повторяться');
 pristine.addValidator(hashTagInput, hashTagTextValidate, 'Хэш-тег должен начинаться с # и содержать только буквы и символы');
 pristine.addValidator(commentInput, commentValidate, 'Максимальное количество символов 140');
+pristine.addValidator(hashTagInput, hashTagSizeValidate, 'Максимальный размер хэштега 20 символов');
 
 const addFormListener = () => {
   fileUploader.addEventListener('change', () => {
@@ -140,7 +141,7 @@ const addFormListener = () => {
     picturePreview.style = '';
 
     // Cansel button
-    buttonCansel.addEventListener('click', onCloseButton);
+    buttonCancel.addEventListener('click', onButtonClose);
     window.addEventListener('keydown', onCloseEscape);
 
 
@@ -168,7 +169,7 @@ const addFormListener = () => {
     hashTagInput.addEventListener('focusout', addEscListenerOnHashTag);
     commentInput.addEventListener('focusout', addEscListenerOnComment);
 
-    form.addEventListener('submit', formFunction);
+    form.addEventListener('submit', onFormSubmit);
   });
 };
 

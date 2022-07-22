@@ -17,6 +17,7 @@ const generetePublications = () => {
 };
 
 const sendForm = (formData) => {
+  let isError = false;
   fetch(SERVER,
     {
       method: 'POST',
@@ -25,10 +26,13 @@ const sendForm = (formData) => {
   )
     .catch(() => {
       addErrorMessage();
+      isError = true;
     }).then(() => {
-      buttonDisabled(formSubmitButton, 'Публикуется...');
-      closeModalWindow();
-      addSuccesfulMessage();
+      if(!isError) {
+        buttonDisabled(formSubmitButton, 'Публикуется...');
+        closeModalWindow();
+        addSuccesfulMessage();
+      }
     });
 };
 

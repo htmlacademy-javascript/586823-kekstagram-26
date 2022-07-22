@@ -1,29 +1,31 @@
 import {picturePreview, inputScale} from './form.js';
 
-const stepScale = 25;
+const STEP = 25;
+const MIN_SCALE = 25;
+const MAX_SCALE = 100;
 
-const minusPictureScale = () => {
+const decreasePictureScale = () => {
   const inputScaleNumber = inputScale.value.split('%');
-  if(inputScaleNumber[0] - stepScale <= stepScale) {
-    inputScale.value = `${stepScale  }%`;
-    inputScaleNumber[0] = stepScale;
+  if(inputScaleNumber[0] - STEP <= MIN_SCALE) {
+    inputScale.value = `${MIN_SCALE  }%`;
+    inputScaleNumber[0] = MIN_SCALE;
   } else {
-    inputScale.value = `${inputScaleNumber[0] - stepScale  }%`;
-    inputScaleNumber[0] = inputScaleNumber[0] - stepScale;
+    inputScale.value = `${inputScaleNumber[0] - STEP  }%`;
+    inputScaleNumber[0] = inputScaleNumber[0] - STEP;
   }
   picturePreview.style.transform = `scale(${inputScaleNumber[0]  }%)`;
 };
-const plusPictureScale = () => {
+const increasePictureScale = () => {
   const inputScaleArray = inputScale.value.split('%');
   let inputScaleNumber = Number(inputScaleArray[0]);
-  if(inputScaleNumber + stepScale >= 100) {
-    inputScale.value = '100%';
-    inputScaleNumber = 100;
+  if(inputScaleNumber + STEP >= MAX_SCALE) {
+    inputScale.value = `${MAX_SCALE  }%`;
+    inputScaleNumber = MAX_SCALE;
   } else {
-    inputScale.value = `${inputScaleNumber + stepScale  }%`;
-    inputScaleNumber = inputScaleNumber + stepScale;
+    inputScale.value = `${inputScaleNumber + STEP  }%`;
+    inputScaleNumber = inputScaleNumber + STEP;
   }
   picturePreview.style.transform = `scale(${inputScaleNumber  }%)`;
 };
 
-export {minusPictureScale, plusPictureScale};
+export {decreasePictureScale as minusPictureScale, increasePictureScale as plusPictureScale};

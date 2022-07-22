@@ -2,6 +2,8 @@ import {publicationArray} from './api.js';
 import { generetePublicationsArray } from './publications.js';
 import {debounce} from './util.js';
 
+const RANDOM_PUBLICATIONS_LIMIT = 10;
+
 const filter = document.querySelector('.img-filters');
 const buttonContainer = filter.querySelector('.img-filters__form');
 const buttons = buttonContainer.querySelectorAll('.img-filters__button');
@@ -27,11 +29,11 @@ const showRandomPublications = (publicationCount, publicationArr) => {
   randomUniqIndex.forEach((randomIndex, i) => {
     publicationForRegenerate[i] = publicationArray[randomIndex];
   });
-  generetePublicationsArray(publicationForRegenerate);
+  generetePublicationsArray(publicationForRegenerate, false);
 };
 
 const shownAllPublications = () => {
-  generetePublicationsArray(publicationArray);
+  generetePublicationsArray(publicationArray, false);
 };
 
 const showPopularPublication = () => {
@@ -41,7 +43,7 @@ const showPopularPublication = () => {
     const bComments = b.comments.length;
     return bComments - aComments;
   });
-  generetePublicationsArray(pupublicationArrayCopy);
+  generetePublicationsArray(pupublicationArrayCopy, false);
 };
 
 const changeFilter = (evt) => {
@@ -53,7 +55,7 @@ const changeFilter = (evt) => {
   activeButton.classList.add('img-filters__button--active');
 
   if(activeButton.id === 'filter-random') {
-    showRandomPublications(10, publicationArray);
+    showRandomPublications(RANDOM_PUBLICATIONS_LIMIT, publicationArray);
   } else if (activeButton.id === 'filter-default') {
     shownAllPublications();
   } else if (activeButton.id === 'filter-discussed') {
