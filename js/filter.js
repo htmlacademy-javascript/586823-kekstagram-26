@@ -1,59 +1,61 @@
-import {publicationArray} from './api.js';
+import {publicationsArray} from './api.js';
 import { generetePublicationsArray } from './publications.js';
 import {debounce} from './util.js';
 
-const filter = document.querySelector('.img-filters');
-const buttonContainer = filter.querySelector('.img-filters__form');
-const buttons = buttonContainer.querySelectorAll('.img-filters__button');
-filter.classList.remove('img-filters--inactive');
+const RANDOM_PUBLICATIONS_LIMIT = 10;
 
-const showRandomPublications = (publicationCount, publicationArr) => {
-  const publicationForRegenerate = [];
-  const notUsedIndex = [];
-  const randomUniqIndex = [];
-  publicationArr.forEach((element, i) => {
-    notUsedIndex[i] = i;
+const filterElement = document.querySelector('.img-filters');
+const buttonContainerElement = filterElement.querySelector('.img-filters__form');
+const buttonsElements = buttonContainerElement.querySelectorAll('.img-filters__button');
+filterElement.classList.remove('img-filters--inactive');
+
+const showRandomPublications = (publicationCount, publicationsArr) => {
+  const publicationsForRegenerate = [];
+  const indexsNotUsed = [];
+  const indexsRandomUniq = [];
+  publicationsArr.forEach((element, i) => {
+    indexsNotUsed[i] = i;
   });
 
   for (let i = 0; i < publicationCount; i++) {
     let randomIndex;
     do {
-      randomIndex = Math.round(Math.random() * (notUsedIndex.length - 1));
-    } while (notUsedIndex[randomIndex] === 'q');
+      randomIndex = Math.round(Math.random() * (indexsNotUsed.length - 1));
+    } while (indexsNotUsed[randomIndex] === 'q');
 
-    randomUniqIndex[i] = notUsedIndex[randomIndex];
-    notUsedIndex[randomIndex] = 'q';
+    indexsRandomUniq[i] = indexsNotUsed[randomIndex];
+    indexsNotUsed[randomIndex] = 'q';
   }
-  randomUniqIndex.forEach((randomIndex, i) => {
-    publicationForRegenerate[i] = publicationArray[randomIndex];
+  indexsRandomUniq.forEach((randomIndex, i) => {
+    publicationsForRegenerate[i] = publicationsArray[randomIndex];
   });
-  generetePublicationsArray(publicationForRegenerate);
+  generetePublicationsArray(publicationsForRegenerate, false);
 };
 
 const shownAllPublications = () => {
-  generetePublicationsArray(publicationArray);
+  generetePublicationsArray(publicationsArray, false);
 };
 
 const showPopularPublication = () => {
-  const pupublicationArrayCopy = publicationArray.slice(0);
-  pupublicationArrayCopy.sort((a, b) => {
+  const pupublicationsArrayCopy = publicationsArray.slice(0);
+  pupublicationsArrayCopy.sort((a, b) => {
     const aComments = a.comments.length;
     const bComments = b.comments.length;
     return bComments - aComments;
   });
-  generetePublicationsArray(pupublicationArrayCopy);
+  generetePublicationsArray(pupublicationsArrayCopy, false);
 };
 
 const changeFilter = (evt) => {
   // active button's styles
   const activeButton = evt.target;
-  buttons.forEach((button) => {
+  buttonsElements.forEach((button) => {
     button.classList.remove('img-filters__button--active');
   });
   activeButton.classList.add('img-filters__button--active');
 
   if(activeButton.id === 'filter-random') {
-    showRandomPublications(10, publicationArray);
+    showRandomPublications(RANDOM_PUBLICATIONS_LIMIT, publicationsArray);
   } else if (activeButton.id === 'filter-default') {
     shownAllPublications();
   } else if (activeButton.id === 'filter-discussed') {
@@ -62,7 +64,7 @@ const changeFilter = (evt) => {
 };
 
 const addFilterListener = () => {
-  buttonContainer.addEventListener('click', debounce(changeFilter));
+  buttonContainerElement.addEventListener('click', debounce(changeFilter));
 };
 
 export {addFilterListener};

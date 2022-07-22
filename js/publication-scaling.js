@@ -1,29 +1,31 @@
-import {picturePreview, inputScale} from './form.js';
+import {picturePreviewElement, inputScaleElement} from './form.js';
 
-const stepScale = 25;
+const STEP = 25;
+const MIN_SCALE = 25;
+const MAX_SCALE = 100;
 
-const minusPictureScale = () => {
-  const inputScaleNumber = inputScale.value.split('%');
-  if(inputScaleNumber[0] - stepScale <= stepScale) {
-    inputScale.value = `${stepScale  }%`;
-    inputScaleNumber[0] = stepScale;
+const decreasePictureScale = () => {
+  const inputScaleNumber = inputScaleElement.value.split('%');
+  if(inputScaleNumber[0] - STEP <= MIN_SCALE) {
+    inputScaleElement.value = `${MIN_SCALE  }%`;
+    inputScaleNumber[0] = MIN_SCALE;
   } else {
-    inputScale.value = `${inputScaleNumber[0] - stepScale  }%`;
-    inputScaleNumber[0] = inputScaleNumber[0] - stepScale;
+    inputScaleElement.value = `${inputScaleNumber[0] - STEP  }%`;
+    inputScaleNumber[0] = inputScaleNumber[0] - STEP;
   }
-  picturePreview.style.transform = `scale(${inputScaleNumber[0]  }%)`;
+  picturePreviewElement.style.transform = `scale(${inputScaleNumber[0]  }%)`;
 };
-const plusPictureScale = () => {
-  const inputScaleArray = inputScale.value.split('%');
+const increasePictureScale = () => {
+  const inputScaleArray = inputScaleElement.value.split('%');
   let inputScaleNumber = Number(inputScaleArray[0]);
-  if(inputScaleNumber + stepScale >= 100) {
-    inputScale.value = '100%';
-    inputScaleNumber = 100;
+  if(inputScaleNumber + STEP >= MAX_SCALE) {
+    inputScaleElement.value = `${MAX_SCALE  }%`;
+    inputScaleNumber = MAX_SCALE;
   } else {
-    inputScale.value = `${inputScaleNumber + stepScale  }%`;
-    inputScaleNumber = inputScaleNumber + stepScale;
+    inputScaleElement.value = `${inputScaleNumber + STEP  }%`;
+    inputScaleNumber = inputScaleNumber + STEP;
   }
-  picturePreview.style.transform = `scale(${inputScaleNumber  }%)`;
+  picturePreviewElement.style.transform = `scale(${inputScaleNumber  }%)`;
 };
 
-export {minusPictureScale, plusPictureScale};
+export {decreasePictureScale, increasePictureScale};

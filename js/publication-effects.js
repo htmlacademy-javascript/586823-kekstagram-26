@@ -1,22 +1,22 @@
-import {effectSlider, picturePreview, effectSliderContainer, inputScale} from './form.js';
+import {effectSliderElement, picturePreviewElement, effectSliderContainerElement, inputScaleElement} from './form.js';
 
 const changeInputStyleValue = (effectStyle) => {
   switch(effectStyle) {
     case 'grayscale':
     case 'sepia':
     case 'brightness':
-      effectSlider.noUiSlider.on('update', () => {
-        picturePreview.style.filter = `${effectStyle}(${  effectSlider.noUiSlider.get()})`;
+      effectSliderElement.noUiSlider.on('update', () => {
+        picturePreviewElement.style.filter = `${effectStyle}(${  effectSliderElement.noUiSlider.get()})`;
       });
       break;
     case 'invert':
-      effectSlider.noUiSlider.on('update', () => {
-        picturePreview.style.filter = `${effectStyle}(${  effectSlider.noUiSlider.get()}%)`;
+      effectSliderElement.noUiSlider.on('update', () => {
+        picturePreviewElement.style.filter = `${effectStyle}(${  effectSliderElement.noUiSlider.get()}%)`;
       });
       break;
     case 'blur':
-      effectSlider.noUiSlider.on('update', () => {
-        picturePreview.style.filter = `${effectStyle}(${  effectSlider.noUiSlider.get()}px)`;
+      effectSliderElement.noUiSlider.on('update', () => {
+        picturePreviewElement.style.filter = `${effectStyle}(${  effectSliderElement.noUiSlider.get()}px)`;
       });
       break;
   }
@@ -24,20 +24,20 @@ const changeInputStyleValue = (effectStyle) => {
 
 const changeEffect = (evt) => {
   // reset
-  picturePreview.classList = '';
-  picturePreview.style = '';
-  picturePreview.style.transform = `scale(${  inputScale.value})`;
+  picturePreviewElement.classList = '';
+  picturePreviewElement.style = '';
+  picturePreviewElement.style.transform = `scale(${  inputScaleElement.value})`;
   const effectName = evt.target.id.split('-');
-  picturePreview.classList.add(`effects__preview--${  effectName[1]}`);
+  picturePreviewElement.classList.add(`effects__preview--${  effectName[1]}`);
 
   // range slider
-  if (picturePreview.classList.contains('effects__preview--none')) {
-    effectSliderContainer.classList.add('hidden');
+  if (picturePreviewElement.classList.contains('effects__preview--none')) {
+    effectSliderContainerElement.classList.add('hidden');
   } else {
-    effectSliderContainer.classList.remove('hidden');
+    effectSliderContainerElement.classList.remove('hidden');
     switch(effectName[1]) {
       case 'chrome':
-        effectSlider.noUiSlider.updateOptions({
+        effectSliderElement.noUiSlider.updateOptions({
           range: {
             min: 0,
             max: 1,
@@ -48,7 +48,7 @@ const changeEffect = (evt) => {
         changeInputStyleValue('grayscale');
         break;
       case 'sepia':
-        effectSlider.noUiSlider.updateOptions({
+        effectSliderElement.noUiSlider.updateOptions({
           range: {
             min: 0,
             max: 1,
@@ -59,7 +59,7 @@ const changeEffect = (evt) => {
         changeInputStyleValue('sepia');
         break;
       case 'marvin':
-        effectSlider.noUiSlider.updateOptions({
+        effectSliderElement.noUiSlider.updateOptions({
           range: {
             min: 0,
             max: 100,
@@ -70,7 +70,7 @@ const changeEffect = (evt) => {
         changeInputStyleValue('invert');
         break;
       case 'phobos':
-        effectSlider.noUiSlider.updateOptions({
+        effectSliderElement.noUiSlider.updateOptions({
           range: {
             min: 0,
             max: 3,
@@ -81,7 +81,7 @@ const changeEffect = (evt) => {
         changeInputStyleValue('blur');
         break;
       case 'heat':
-        effectSlider.noUiSlider.updateOptions({
+        effectSliderElement.noUiSlider.updateOptions({
           range: {
             min: 1,
             max: 3,
@@ -93,7 +93,7 @@ const changeEffect = (evt) => {
         break;
     }
   }
-  picturePreview.style.transform = inputScale.value;
+  picturePreviewElement.style.transform = inputScaleElement.value;
 };
 
 export {changeEffect};
