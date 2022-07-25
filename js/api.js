@@ -1,20 +1,20 @@
 import { buttonDisabled} from './util.js';
 import {addSuccesfulMessage, addErrorMessage} from './form-message.js';
 import {closeFormWindow, formSubmitButtonElement} from './form.js';
-import { generetePublicationsArray } from './publications.js';
+import { generatePublicationsArray } from './publications.js';
 
 const DATA_SERVER = 'https://26.javascript.pages.academy/kekstagram/data';
 const SERVER = 'https://26.javascript.pages.academy/kekstagram';
 
-const publicationsArray = [];
-const generetePublications = () => {
+const publications = [];
+const generatePublications = () => {
   fetch(DATA_SERVER)
     .then((response) => response.json())
-    .then((publications) => {
-      publications.forEach((publication, i) => {
-        publicationsArray[i] = publication;
+    .then((loadedPublications) => {
+      loadedPublications.forEach((publication, i) => {
+        publications[i] = publication;
       });
-      generetePublicationsArray(publicationsArray);
+      generatePublicationsArray(publications);
     });
 };
 
@@ -38,4 +38,4 @@ const sendForm = (formData) => {
     });
 };
 
-export {publicationsArray, sendForm, generetePublications};
+export {publications, sendForm, generatePublications};

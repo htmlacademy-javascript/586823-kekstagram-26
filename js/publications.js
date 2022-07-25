@@ -3,10 +3,10 @@ const pictureTemplateElement = document.querySelector('#picture').content.queryS
 
 const publicationsFragment = document.createDocumentFragment();
 
-const generetePublicationsArray = (publicationsArray, isFirst = true) => {
+const generatePublicationsArray = (publications, isFirst = true) => {
   if(isFirst) {
     let i = 0;
-    publicationsArray.forEach(({url, likes, comments}) => {
+    publications.forEach(({url, likes, comments}) => {
       const publicationElement = pictureTemplateElement.cloneNode(true);
       publicationElement.querySelector('.picture__img').src = url;
       publicationElement.querySelector('.picture__comments').textContent = comments.length;
@@ -16,8 +16,8 @@ const generetePublicationsArray = (publicationsArray, isFirst = true) => {
       i++;
     });
   } else {
-    const publications = pictureBlockElement.querySelectorAll('.picture');
-    publicationsArray.forEach(({url, likes, comments, id}) => {
+    const publicationElements = pictureBlockElement.querySelectorAll('.picture');
+    publications.forEach(({url, likes, comments, id}) => {
       const publicationElement = pictureTemplateElement.cloneNode(true);
       publicationElement.querySelector('.picture__img').src = url;
       publicationElement.querySelector('.picture__comments').textContent = comments.length;
@@ -25,7 +25,7 @@ const generetePublicationsArray = (publicationsArray, isFirst = true) => {
       publicationElement.dataset.id = id;
       publicationsFragment.appendChild(publicationElement);
     });
-    publications.forEach((publication) => {
+    publicationElements.forEach((publication) => {
       publication.remove();
     });
   }
@@ -33,4 +33,4 @@ const generetePublicationsArray = (publicationsArray, isFirst = true) => {
   pictureBlockElement.appendChild(publicationsFragment);
 };
 
-export {generetePublicationsArray};
+export {generatePublicationsArray};

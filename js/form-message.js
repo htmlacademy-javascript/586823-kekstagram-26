@@ -1,4 +1,5 @@
 import {isEscape} from './util.js';
+import { onKeydown } from './form.js';
 
 const bodyElement = document.querySelector('body');
 const succesfulMessageTemplateElement = bodyElement.querySelector('#success').content.querySelector('.success');
@@ -45,6 +46,7 @@ const addErrorMessage = () => {
     errorButton.removeEventListener('click', deleteMessageButton);
     window.removeEventListener('keydown', deleteMessageEsc);
     window.removeEventListener('click', deleteMessageClick);
+    window.addEventListener('keydown', onKeydown);
   }
 
   function deleteMessageButton () {
@@ -65,6 +67,7 @@ const addErrorMessage = () => {
   errorButton.addEventListener('click', deleteMessageButton);
   window.addEventListener('keydown', deleteMessageEsc);
   window.addEventListener('click', deleteMessageClick);
+  window.removeEventListener('keydown', onKeydown);
 };
 
 export {addSuccesfulMessage, addErrorMessage};
