@@ -1,4 +1,4 @@
-import { isEscape, buttonActive } from './util.js';
+import { isEscape, buttonDisabled} from './util.js';
 import {validateHashTagCount, validateHashTagText, validateHashTagRepeat, validateComment, validateHashTagSize} from './validation-functions.js';
 import {decreasePictureScale, increasePictureScale} from './publication-scaling.js';
 import {changeEffect} from './publication-effects.js';
@@ -57,6 +57,7 @@ const onFormSubmit = (evt) => {
   evt.preventDefault();
   if(pristine.validate()) {
     const formData = new FormData(evt.target);
+    buttonDisabled(formSubmitButtonElement, 'Публикуется...');
     sendForm(formData);
   }
 };
@@ -83,7 +84,6 @@ const closeFormWindow = () => {
   inputContainersElements.forEach((container) => {
     container.classList.remove('img-upload__field-wrapper--error');
   });
-  buttonActive(formSubmitButtonElement, 'Опубликовать');
   formElement.removeEventListener('submit', onFormSubmit);
   const allErrorSpan = formElement.querySelectorAll('.pristine-error');
   allErrorSpan.forEach((errorSpan) => {

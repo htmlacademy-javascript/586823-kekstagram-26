@@ -1,6 +1,5 @@
-import { buttonDisabled} from './util.js';
 import {addSuccesfulMessage, addErrorMessage} from './form-message.js';
-import {closeFormWindow, formSubmitButtonElement} from './form.js';
+import {closeFormWindow} from './form.js';
 import { generatePublicationsArray } from './publications.js';
 
 const DATA_SERVER = 'https://26.javascript.pages.academy/kekstagram/data';
@@ -31,7 +30,6 @@ const sendForm = (formData) => {
       isError = true;
     }).then(() => {
       if(!isError) {
-        buttonDisabled(formSubmitButtonElement, 'Публикуется...');
         closeFormWindow();
         addSuccesfulMessage();
       }
