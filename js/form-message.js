@@ -1,10 +1,12 @@
-import {isEscape} from './util.js';
+import {isEscape, buttonActive} from './util.js';
+import { onKeydown, formSubmitButtonElement } from './form.js';
 
 const bodyElement = document.querySelector('body');
 const succesfulMessageTemplateElement = bodyElement.querySelector('#success').content.querySelector('.success');
 const errorMessageTemplateElement = bodyElement.querySelector('#error').content.querySelector('.error');
 
 const addSuccesfulMessage = () => {
+  buttonActive(formSubmitButtonElement, 'Опубликовать');
   const messageElement = succesfulMessageTemplateElement.cloneNode(true);
   const successButton = messageElement.querySelector('.success__button');
 
@@ -36,6 +38,7 @@ const addSuccesfulMessage = () => {
 };
 
 const addErrorMessage = () => {
+  buttonActive(formSubmitButtonElement, 'Опубликовать');
   const messageElement = errorMessageTemplateElement.cloneNode(true);
   const errorButton = messageElement.querySelector('.error__button');
   messageElement.style = 'z-index: 2';
@@ -45,6 +48,7 @@ const addErrorMessage = () => {
     errorButton.removeEventListener('click', deleteMessageButton);
     window.removeEventListener('keydown', deleteMessageEsc);
     window.removeEventListener('click', deleteMessageClick);
+    window.addEventListener('keydown', onKeydown);
   }
 
   function deleteMessageButton () {
@@ -65,6 +69,7 @@ const addErrorMessage = () => {
   errorButton.addEventListener('click', deleteMessageButton);
   window.addEventListener('keydown', deleteMessageEsc);
   window.addEventListener('click', deleteMessageClick);
+  window.removeEventListener('keydown', onKeydown);
 };
 
 export {addSuccesfulMessage, addErrorMessage};

@@ -1,5 +1,5 @@
-import {publicationsArray} from './api.js';
-import { generetePublicationsArray } from './publications.js';
+import {publications} from './api.js';
+import { generatePublicationsArray } from './publications.js';
 import {debounce} from './util.js';
 
 const RANDOM_PUBLICATIONS_LIMIT = 10;
@@ -9,41 +9,41 @@ const buttonContainerElement = filterElement.querySelector('.img-filters__form')
 const buttonsElements = buttonContainerElement.querySelectorAll('.img-filters__button');
 filterElement.classList.remove('img-filters--inactive');
 
-const showRandomPublications = (publicationCount, publicationsArr) => {
-  const publicationsForRegenerate = [];
-  const indexsNotUsed = [];
-  const indexsRandomUniq = [];
-  publicationsArr.forEach((element, i) => {
-    indexsNotUsed[i] = i;
+const showRandomPublications = (publicationCount) => {
+  const shuffledPublications = [];
+  const notUsedIndexes = [];
+  const randomUniqueIndexes = [];
+  publications.forEach((element, i) => {
+    notUsedIndexes[i] = i;
   });
 
   for (let i = 0; i < publicationCount; i++) {
     let randomIndex;
     do {
-      randomIndex = Math.round(Math.random() * (indexsNotUsed.length - 1));
-    } while (indexsNotUsed[randomIndex] === 'q');
+      randomIndex = Math.round(Math.random() * (notUsedIndexes.length - 1));
+    } while (notUsedIndexes[randomIndex] === 'q');
 
-    indexsRandomUniq[i] = indexsNotUsed[randomIndex];
-    indexsNotUsed[randomIndex] = 'q';
+    randomUniqueIndexes[i] = notUsedIndexes[randomIndex];
+    notUsedIndexes[randomIndex] = 'q';
   }
-  indexsRandomUniq.forEach((randomIndex, i) => {
-    publicationsForRegenerate[i] = publicationsArray[randomIndex];
+  randomUniqueIndexes.forEach((randomIndex, i) => {
+    shuffledPublications[i] = publications[randomIndex];
   });
-  generetePublicationsArray(publicationsForRegenerate, false);
+  generatePublicationsArray(shuffledPublications, false);
 };
 
-const shownAllPublications = () => {
-  generetePublicationsArray(publicationsArray, false);
+const showAllPublications = () => {
+  generatePublicationsArray(publications, false);
 };
 
 const showPopularPublication = () => {
-  const pupublicationsArrayCopy = publicationsArray.slice(0);
-  pupublicationsArrayCopy.sort((a, b) => {
+  const copiedPublications = publications.slice(0);
+  copiedPublications.sort((a, b) => {
     const aComments = a.comments.length;
     const bComments = b.comments.length;
     return bComments - aComments;
   });
-  generetePublicationsArray(pupublicationsArrayCopy, false);
+  generatePublicationsArray(copiedPublications, false);
 };
 
 const changeFilter = (evt) => {
@@ -55,9 +55,9 @@ const changeFilter = (evt) => {
   activeButton.classList.add('img-filters__button--active');
 
   if(activeButton.id === 'filter-random') {
-    showRandomPublications(RANDOM_PUBLICATIONS_LIMIT, publicationsArray);
+    showRandomPublications(RANDOM_PUBLICATIONS_LIMIT);
   } else if (activeButton.id === 'filter-default') {
-    shownAllPublications();
+    showAllPublications();
   } else if (activeButton.id === 'filter-discussed') {
     showPopularPublication();
   }

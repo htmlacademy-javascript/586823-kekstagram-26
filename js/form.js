@@ -1,4 +1,4 @@
-import { isEscape, buttonActive } from './util.js';
+import { isEscape, buttonDisabled} from './util.js';
 import {validateHashTagCount, validateHashTagText, validateHashTagRepeat, validateComment, validateHashTagSize} from './validation-functions.js';
 import {decreasePictureScale, increasePictureScale} from './publication-scaling.js';
 import {changeEffect} from './publication-effects.js';
@@ -9,7 +9,7 @@ const formElement = bodyElement.querySelector('.img-upload__form');
 const publicationEditorElement = formElement.querySelector('.img-upload__overlay');
 const fileUploaderElement = formElement.querySelector('#upload-file');
 const picturePreviewElement = formElement.querySelector('.img-upload__preview').querySelector('img');
-const buttonCancelElement = formElement.querySelector('#upload-cancel');
+const cancelButtonElement = formElement.querySelector('#upload-cancel');
 const effectsPreviewElements = formElement.querySelectorAll('.effects__preview');
 const hashTagInputElement = formElement.querySelector('.text__hashtags');
 const commentInputElement = formElement.querySelector('.text__description');
@@ -57,6 +57,7 @@ const onFormSubmit = (evt) => {
   evt.preventDefault();
   if(pristine.validate()) {
     const formData = new FormData(evt.target);
+    buttonDisabled(formSubmitButtonElement, 'Публикуется...');
     sendForm(formData);
   }
 };
@@ -69,8 +70,8 @@ const closeFormWindow = () => {
   commentInputElement.removeEventListener('focusout', addEscListenerOnComment);
   hashTagInputElement.removeEventListener('focus', removeEscListenerOnHashTag);
   commentInputElement.removeEventListener('focus', removeEscListenerOnComment);
-  buttonCancelElement.removeEventListener('click', onButtonClose);
-  buttonCancelElement.removeEventListener('click', onEscapeClose);
+  cancelButtonElement.removeEventListener('click', onCancelButtonClick);
+  window.removeEventListener('click', onKeydown);
   buttonMinusScaleElement.removeEventListener('click', decreasePictureScale);
   buttonMinusScaleElement.removeEventListener('click', increasePictureScale);
   inputScaleElement.value = '100%';
@@ -83,7 +84,6 @@ const closeFormWindow = () => {
   inputContainersElements.forEach((container) => {
     container.classList.remove('img-upload__field-wrapper--error');
   });
-  buttonActive(formSubmitButtonElement, 'Опубликовать');
   formElement.removeEventListener('submit', onFormSubmit);
   const allErrorSpan = formElement.querySelectorAll('.pristine-error');
   allErrorSpan.forEach((errorSpan) => {
@@ -92,10 +92,10 @@ const closeFormWindow = () => {
 };
 
 // function for close button
-function onButtonClose() {
+function onCancelButtonClick() {
   closeFormWindow();
 }
-function onEscapeClose (evt) {
+function onKeydown (evt) {
   if(isEscape(evt)) {
     closeFormWindow();
   }
@@ -103,16 +103,16 @@ function onEscapeClose (evt) {
 
 // Function for remove and return Event listener on ESC in modal window
 function removeEscListenerOnHashTag () {
-  window.removeEventListener('keydown', onEscapeClose);
+  window.removeEventListener('keydown', onKeydown);
 }
 function addEscListenerOnHashTag () {
-  window.addEventListener('keydown', onEscapeClose);
+  window.addEventListener('keydown', onKeydown);
 }
 function removeEscListenerOnComment () {
-  window.removeEventListener('keydown', onEscapeClose);
+  window.removeEventListener('keydown', onKeydown);
 }
 function addEscListenerOnComment () {
-  window.addEventListener('keydown', onEscapeClose);
+  window.addEventListener('keydown', onKeydown);
 }
 
 // Pristine Validators
@@ -141,8 +141,8 @@ const addFormListener = () => {
     picturePreviewElement.style = '';
 
     // Cansel button
-    buttonCancelElement.addEventListener('click', onButtonClose);
-    window.addEventListener('keydown', onEscapeClose);
+    cancelButtonElement.addEventListener('click', onCancelButtonClick);
+    window.addEventListener('keydown', onKeydown);
 
 
     /*----------------PICTURE SCALE----------------*/
@@ -174,4 +174,4 @@ const addFormListener = () => {
 };
 
 
-export {addFormListener, effectSliderElement, picturePreviewElement, effectSliderContainerElement, inputScaleElement, closeFormWindow, formSubmitButtonElement};
+export {addFormListener, effectSliderElement, picturePreviewElement, effectSliderContainerElement, inputScaleElement, closeFormWindow, formSubmitButtonElement, onKeydown};

@@ -1,4 +1,4 @@
-import {publicationsArray} from './api.js';
+import {publications} from './api.js';
 import {isEscape} from './util.js';
 
 const COMMENTS_PORTION = 5;
@@ -8,8 +8,8 @@ const picturesContainerElement = bodyElement.querySelector('.pictures');
 const bigPublicationElement = bodyElement.querySelector('.big-picture');
 const shownCommentsCounterElement = bigPublicationElement.querySelector('.comments-count-shown');
 const commentsCounterElement = bigPublicationElement.querySelector('.comments-count');
-const loaderMoreCommentsElement = bodyElement.querySelector('.comments-loader');
-const buttonCancelElement = bodyElement.querySelector('.big-picture__cancel');
+const loadMoreButtonElement = bodyElement.querySelector('.comments-loader');
+const cancelButtonElement = bodyElement.querySelector('.big-picture__cancel');
 const commentBlockElement = bodyElement.querySelector('.social__comments');
 const commentTemplateElement = commentBlockElement.querySelector('.social__comment');
 
@@ -17,7 +17,7 @@ const commentTemplateElement = commentBlockElement.querySelector('.social__comme
 const loadMoreComments = () => {
   const commentsCounterNumber = Number(commentsCounterElement.textContent);
   const shownCommentsNumber = Number(shownCommentsCounterElement.textContent);
-  const allComments = commentBlockElement.querySelectorAll('.social__comment');
+  const allCommentElements = commentBlockElement.querySelectorAll('.social__comment');
 
 
   if(Number(shownCommentsCounterElement.textContent) + COMMENTS_PORTION >= commentsCounterNumber) {
@@ -27,33 +27,33 @@ const loadMoreComments = () => {
   }
 
   for(let i = shownCommentsNumber; i < Number(shownCommentsCounterElement.textContent); i++) {
-    allComments[i].classList.remove('hidden');
+    allCommentElements[i].classList.remove('hidden');
   }
 
   if(commentsCounterNumber === Number(shownCommentsCounterElement.textContent)) {
-    loaderMoreCommentsElement.classList.add('hidden');
+    loadMoreButtonElement.classList.add('hidden');
   }
 };
 
 const closePublicationWindow = () => {
   bigPublicationElement.classList.add('hidden');
   bodyElement.classList.remove('modal-open');
-  buttonCancelElement.removeEventListener('click', onButtonClose);
-  window.removeEventListener('keydown', onEscapeClose);
-  loaderMoreCommentsElement.removeEventListener('click', loadMoreComments);
+  cancelButtonElement.removeEventListener('click', onCancelButtonClick);
+  window.removeEventListener('keydown', onKeydown);
+  loadMoreButtonElement.removeEventListener('click', loadMoreComments);
 };
 
 // Function for close button
-function onButtonClose() {
+function onCancelButtonClick() {
   closePublicationWindow();
 }
-function onEscapeClose(evt) {
+function onKeydown(evt) {
   if(isEscape(evt)) {
     closePublicationWindow();
   }
 }
 
-const onPublicationOpen = (evt) => {
+const onPicturesContainerClick = (evt) => {
   const picture = evt.target.parentNode;
 
   if(picture.className !== 'picture') {
@@ -63,8 +63,8 @@ const onPublicationOpen = (evt) => {
   evt.preventDefault();
 
   // Cansel button
-  buttonCancelElement.addEventListener('click', onButtonClose);
-  window.addEventListener('keydown', onEscapeClose);
+  cancelButtonElement.addEventListener('click', onCancelButtonClick);
+  window.addEventListener('keydown', onKeydown);
 
   // Drawing of bigPublication
   bigPublicationElement.classList.remove('hidden');
@@ -78,10 +78,10 @@ const onPublicationOpen = (evt) => {
   bigPublicationElement.querySelector('.social__caption').textContent = picture.querySelector('.picture__comments').textContent;
   if(commentsCounterElement.textContent <= COMMENTS_PORTION) {
     shownCommentsCounterElement.textContent = commentsCounterElement.textContent;
-    loaderMoreCommentsElement.classList.add('hidden');
+    loadMoreButtonElement.classList.add('hidden');
   } else {
     shownCommentsCounterElement.textContent = COMMENTS_PORTION;
-    loaderMoreCommentsElement.classList.remove('hidden');
+    loadMoreButtonElement.classList.remove('hidden');
   }
 
   // Drawing comments
@@ -89,7 +89,7 @@ const onPublicationOpen = (evt) => {
   const commentsFragment = document.createDocumentFragment();
 
   let i = 0;
-  publicationsArray[id].comments.forEach((comment) => {
+  publications[id].comments.forEach((comment) => {
     const commentElement = commentTemplateElement.cloneNode(true);
 
     commentElement.querySelector('.social__picture').src = comment.avatar;
@@ -105,11 +105,11 @@ const onPublicationOpen = (evt) => {
 
   commentBlockElement.appendChild(commentsFragment);
 
-  loaderMoreCommentsElement.addEventListener('click', loadMoreComments);
+  loadMoreButtonElement.addEventListener('click', loadMoreComments);
 };
 
 const openPublication = () => {
-  picturesContainerElement.addEventListener('click', onPublicationOpen);
+  picturesContainerElement.addEventListener('click', onPicturesContainerClick);
 };
 
 export {openPublication};
