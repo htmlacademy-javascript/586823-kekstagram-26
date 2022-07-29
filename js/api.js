@@ -18,21 +18,21 @@ const generatePublications = () => {
 };
 
 const sendForm = (formData) => {
-  let isError = false;
   fetch(SERVER,
     {
       method: 'POST',
       body: formData,
     }
   )
-    .catch(() => {
-      addErrorMessage();
-      isError = true;
-    }).then(() => {
-      if(!isError) {
+    .then((response) => {
+      if(response.ok) {
         closeFormWindow();
         addSuccesfulMessage();
+      } else {
+        addErrorMessage();
       }
+    }).catch(() => {
+      addErrorMessage();
     });
 };
 

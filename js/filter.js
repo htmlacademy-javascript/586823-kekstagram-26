@@ -9,7 +9,7 @@ const buttonContainerElement = filterElement.querySelector('.img-filters__form')
 const buttonsElements = buttonContainerElement.querySelectorAll('.img-filters__button');
 filterElement.classList.remove('img-filters--inactive');
 
-const showRandomPublications = (publicationCount, publications) => {
+const showRandomPublications = (publicationCount) => {
   const shuffledPublications = [];
   const notUsedIndexes = [];
   const randomUniqueIndexes = [];
@@ -55,7 +55,7 @@ const changeFilter = (evt) => {
   activeButton.classList.add('img-filters__button--active');
 
   if(activeButton.id === 'filter-random') {
-    showRandomPublications(RANDOM_PUBLICATIONS_LIMIT, publications);
+    showRandomPublications(RANDOM_PUBLICATIONS_LIMIT);
   } else if (activeButton.id === 'filter-default') {
     showAllPublications();
   } else if (activeButton.id === 'filter-discussed') {

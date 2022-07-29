@@ -39,7 +39,7 @@ const closePublicationWindow = () => {
   bigPublicationElement.classList.add('hidden');
   bodyElement.classList.remove('modal-open');
   cancelButtonElement.removeEventListener('click', onCancelButtonClick);
-  window.removeEventListener('keydown', onEscapeClose);
+  window.removeEventListener('keydown', onKeydown);
   loadMoreButtonElement.removeEventListener('click', loadMoreComments);
 };
 
@@ -47,7 +47,7 @@ const closePublicationWindow = () => {
 function onCancelButtonClick() {
   closePublicationWindow();
 }
-function onEscapeClose(evt) {
+function onKeydown(evt) {
   if(isEscape(evt)) {
     closePublicationWindow();
   }
@@ -64,7 +64,7 @@ const onPicturesContainerClick = (evt) => {
 
   // Cansel button
   cancelButtonElement.addEventListener('click', onCancelButtonClick);
-  window.addEventListener('keydown', onEscapeClose);
+  window.addEventListener('keydown', onKeydown);
 
   // Drawing of bigPublication
   bigPublicationElement.classList.remove('hidden');
